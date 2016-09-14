@@ -3,6 +3,8 @@ function init() {
         type: 'POST',
         url : 'http://jayke.nl:8888/web/',
         data: JSON.stringify({'type': 'get_report', 'data':{'device': 'test', 'last': 360000}}),
+        //data: JSON.stringify({'type': 'get_report', 'data':{'device': 'test', 'start': '2016-09-13 08:00:01',
+        //                      'end': '2016-09-13 08:20:00'}}),
         success: handleReports,
         error: handleError
    });

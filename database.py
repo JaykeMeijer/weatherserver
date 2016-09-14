@@ -62,7 +62,29 @@ class Database:
         return res
 
     def get_reports_between(self, device_id, report_type, start, end, admin=False):
-        return []
+        cur = self.get_cur()
+        query = '''
+                SELECT reports.id as id, time as time,
+                    report_types.name as report_type, value as value
+                FROM reports
+                INNER JOIN report_types
+                ON report_types.id = reports.report_type
+                WHERE device = %(device_id)s
+                AND time BETWEEN %(start)s::timestamp AND %(end)s::timestamp
+                '''
+        variables = {'device_id': device_id, 'start': start, 'end': end}
+
+        if report_type is not None:
+            query += ' AND report_type = %(report_type)s'
+            variables['report_type'] = report_type
+
+        if not admin:
+            query += ' AND report_types.admin_feature = false'
+
+        cur.execute(query, variables)
+        res = cur.fetchall()
+        cur.close()
+        return res
 
     def report_type_id_exists(self, rt_id):
         cur = self.get_cur()

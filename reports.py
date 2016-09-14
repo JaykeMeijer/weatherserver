@@ -8,7 +8,7 @@ def store_report(device_id, report_type, value):
     database.store_report(device_id, report_type, value)
 
 
-def get_reports(device_id, report_type=None, last=None, start=None, end=None):
+def get_reports(device_id, report_type=None, last=None, start=None, end=None, limit=None):
     if last is not None:
         reports = database.get_reports_since(device_id, report_type, last, admin=True)
     else:
@@ -59,7 +59,7 @@ def handle_get_reports(data):
         reports = get_reports(device_id,
                               start=data['start'],
                               end=data['end'],
-                              record_type=rt_id)
+                              report_type=rt_id)
     else:
         reports = get_reports(device_id, last=3600)
     return 200, json.dumps(reports)
