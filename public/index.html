@@ -17,13 +17,11 @@
             Voltage:
                 <div id=volt></div>
         </p>
-        <p>
-        SEND:<br />
-        Temperature:<input type=text id=temp_send /><br />
-        Humidty:<input type=text id=humi_send /><br />
-        Voltage:<input type=text id=volt_send /><br />
-        <input type=button value=Send onclick='sendReport()' />
 
+        <canvas id="tempChart" width="400px" height="400px"></canvas>
+
+        <script src="js/moment.min.js"></script>
+        <script src="js/Chart.min.js"></script>
         <script src="js/jquery-3.1.0.min.js"></script>
         <script src="js/page.js"></script>
     </body>
