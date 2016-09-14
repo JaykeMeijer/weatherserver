@@ -5,7 +5,7 @@ from database import database
 
 
 def store_report(device_id, report_type, value):
-    raise NotImplemented
+    database.store_report(device_id, report_type, value)
 
 
 def get_reports(device_id, report_type=None, last=None, start=None, end=None):
@@ -63,3 +63,16 @@ def handle_get_reports(data):
     else:
         reports = get_reports(device_id, last=3600)
     return 200, json.dumps(reports)
+
+
+def handle_store_reports(device, data):
+    device_id = devices.get_id(device)
+    if device_id is None:
+        return 400, 'Unknown device'
+
+    for report_type, value in data.iteritems():
+        rt_id = get_report_type_id(report_type)
+        if rt_id is not None:
+            store_report(device_id, rt_id, value)
+
+    return 200, 'Succeeded'

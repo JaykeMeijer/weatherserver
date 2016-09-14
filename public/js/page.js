@@ -9,9 +9,37 @@ function init() {
 }
 
 function handleReports(data, textStatus, jqXHR) {
-    console.log(data);
+    reports = JSON.parse(data);
+    for (i = 0; i < reports.length; i++) {
+        report = reports[i];
+        switch(report.report_type) {
+            case 'temperature':
+                $('#temp').append(report.time + ': ' + report.value + '&deg;C<br />');
+                break;
+            case 'humidity':
+                $('#humi').append(report.time + ': ' + report.value + '%<br />');
+                break;
+            case 'voltage':
+                $('#volt').append(report.time + ': ' + report.value + 'V<br />');
+        } 
+    }
 }
 
 function handleError(jqXHR, textStatus, error) {
     console.log(error);
+}
+
+function sendReport() {
+    var data = {temperature: $('#temp_send').val(),
+                humidity: $('#humi_send').val(),
+                voltage: $('#volt_send').val()};
+    var packet = {device: 1,
+                  type: 'store_reports',
+                  data: data};
+    $.ajax({
+        type: 'POST',
+        url: 'http://jayke.nl:8888/report/',
+        data: JSON.stringify(packet),
+        success: function() {location.reload()},
+        error: handleError()});
 }

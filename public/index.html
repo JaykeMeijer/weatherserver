@@ -5,7 +5,25 @@
     </head>
 
     <body onload="init();">
-        This page will detail the weather maybe
+        <p>
+            Temperature:
+                <div id=temp></div>
+        </p>
+        <p>
+            Humidity:
+                <div id=humi></div>
+        </p>
+        <p>
+            Voltage:
+                <div id=volt></div>
+        </p>
+        <p>
+        SEND:<br />
+        Temperature:<input type=text id=temp_send /><br />
+        Humidty:<input type=text id=humi_send /><br />
+        Voltage:<input type=text id=volt_send /><br />
+        <input type=button value=Send onclick='sendReport()' />
+
         <script src="js/jquery-3.1.0.min.js"></script>
         <script src="js/page.js"></script>
     </body>

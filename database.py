@@ -78,12 +78,21 @@ class Database:
         cur.execute(query, {'name': rt_name})
         rt = cur.fetchone()
         cur.close()
-        print(rt)
 
         if rt is None:
             return None
         else:
             return rt['id']
 
+    def store_report(self, device_id, report_type_id, value):
+        cur = self.conn.cursor()
+        query = '''
+            INSERT INTO reports (device, report_type, value)
+            VALUES (%(device_id)s, %(report_type_id)s, %(value)s)'''
+        cur.execute(query, {'device_id': device_id,
+                            'report_type_id': report_type_id,
+                            'value': value})
+        self.conn.commit()
+        cur.close()
 
 database = Database()
