@@ -36,6 +36,31 @@ class Database:
         else:
             return device['id']
 
+    def get_device(self, device_id):
+        cur = self.get_cur()
+        query = '''SELECT name, location, timezone
+                   FROM devices
+                   WHERE id=%(id)s'''
+        cur.execute(query, {'id': device_id})
+        device = cur.fetchone()
+        cur.close()
+
+        if device is None:
+            return None
+        else:
+            return device
+
+    def get_devices(self):
+        cur = self.get_cur()
+        query = '''
+                SELECT id, name
+                FROM devices
+                '''
+        cur.execute(query)
+        res = cur.fetchall()
+        cur.close()
+        return res
+
     def get_reports_since(self, device_id, report_type, time, admin=False):
         cur = self.get_cur()
         query = '''
@@ -56,6 +81,7 @@ class Database:
         if not admin:
             query += ' AND report_types.admin_feature = false'
 
+        query += 'ORDER BY time ASC'
         cur.execute(query, variables)
         res = cur.fetchall()
         cur.close()

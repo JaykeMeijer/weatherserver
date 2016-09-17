@@ -5,22 +5,47 @@
     </head>
 
     <body onload="init();">
-        <p>
-            Temperature:
-                <div id=temp></div>
-        </p>
-        <p>
-            Humidity:
-                <div id=humi></div>
-        </p>
-        <p>
-            Voltage:
-                <div id=volt></div>
-        </p>
+        <div id=devicebar></div>
+        <div id=current class=card>
+            <div class=card-title>Current</div>
+            <div class=card-content>
+                <div class=current-value>
+                    Temperature:<br /><span id=current-temperature-value class=current-value-value></span>
+                </div>
+                <div class=current-value>
+                    Humidity:<br /><span id=current-humidity-value class=current-value-value></span>
+                </div>
+                <div id=current-time>
+                    Last reading received on <span id=current-time-value></span>
+                </div>
+            </div>
+        </div>
 
-        <canvas id="tempChart" width="400px" height="400px"></canvas>
+        <div id=sensor class=card>
+            <div class=card-title>Sensor information</div>
+            <div class=card-content>
+                <div id=sensor-name></div>
+                <div id=sensor-location>Location: <span id=sensor-location-value></span></div>
+                <div id=sensor-timezone>Timezone: <span id=sensor-timezone-value></span></div>
+            </div>
+        </div>
+
+        <div id=temp class=card>
+            <div class=card-title>Temperature</div>
+            <div class=card-content>
+                <canvas id="tempChart"></canvas>
+            </div>
+        </div>
+
+        <div id=humi class=card>
+            <div class=card-title>Humidity</div>
+            <div class=card-content>
+                <canvas id="humiChart"></canvas>
+            </div>
+        </div>
 
         <script src="js/moment.min.js"></script>
+        <script src="js/moment-timezone-with-data.min.js"></script>
         <script src="js/Chart.min.js"></script>
         <script src="js/jquery-3.1.0.min.js"></script>
         <script src="js/page.js"></script>

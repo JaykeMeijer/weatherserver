@@ -2,12 +2,15 @@
 import tornado.ioloop
 import tornado.web
 import json
-from reports import handle_get_reports, handle_store_reports
+import reports
+import devices
 
 
 class WebHandler(tornado.web.RequestHandler):
     handlers = {
-        'get_report': handle_get_reports
+        'get_report': reports.handle_get_reports,
+        'get_device': devices.handle_get_device,
+        'get_device_list': devices.handle_get_device_list
     }
 
     def set_default_headers(self):
@@ -28,7 +31,7 @@ class WebHandler(tornado.web.RequestHandler):
 
 class ReportHandler(tornado.web.RequestHandler):
     handlers = {
-        'store_reports': handle_store_reports
+        'store_reports': reports.handle_store_reports
     }
 
     def set_default_headers(self):
@@ -37,7 +40,13 @@ class ReportHandler(tornado.web.RequestHandler):
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
     def post(self):
-        data = json.loads(self.request.body)
+        try:
+            data = json.loads(self.request.body)
+        except ValueError:
+            print("Invalid JSON packet received")
+            self.send_error(400)
+            return
+ 
         if 'device' not in data:
             self.send_error(400)
             return
@@ -56,7 +65,7 @@ def configure():
     return tornado.web.Application([
         (r"/web/", WebHandler),
         (r"/report/", ReportHandler)
-    ])
+    ], compress_response=True)
 
 if __name__ == "__main__":
     server = configure()

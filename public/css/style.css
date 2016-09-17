@@ -1,3 +1,96 @@
 body {
-    background-color: #AAAAAA;
+    background-color: #a5ecf3;
+    font-family: 'Trebuchet MS', Helvetica, sans-serif;
+    padding: 0px;
+    margin: 0px;
+}
+
+#devicebar {
+    background-color: #313131;
+    color: #ffffff;
+    width: 98%;
+    height: 4vh;
+    padding-left: 2%;
+}
+
+.devicebar-device {
+    width: 200px;
+    height: 4vh;
+    line-height: 4vh;
+    padding-left: 5px;
+    text-align: center;
+    float: left;
+}
+
+.devicebar-device:hover {
+    background-color: #737373;
+}
+
+.devicebar-device-active {
+    background-color: #737373;
+}
+
+.card {
+    background-color: #fdffe8;
+    margin-left: 2vw;
+    margin-top: 4vh;
+    width: 47vw;
+    min-width: 300px;
+    height: 43vh;
+    float: left;
+
+    -webkit-box-shadow: 0px 0px 33px -6px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 33px -6px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 33px -6px rgba(0,0,0,0.75);
+    transition: box-shadow 0.25s ease-in-out;
+}
+
+.card:hover {
+    -webkit-box-shadow: 0px 0px 33px -6px rgba(0,123,255,1);
+    -moz-box-shadow: 0px 0px 33px -6px rgba(0,123,255,1);
+    box-shadow: 0px 0px 33px -6px rgba(0,123,255,1);
+    transition: box-shadow 0.25s ease-in-out;
+}
+
+.card-title {
+    background-color: #fdff9d;
+	display: flex;
+    align-items: center;
+    width: 97%;
+    height: 10%;
+    padding-left: 3%;
+    font-style: italic;
+    font-size: 3vh;
+}
+
+.card-content {
+    width: 94%;
+    height: 84%;
+    padding: 3%;
+}
+
+#current-time {
+    width: 100%;
+    height: 25%;
+}
+
+.current-value {
+    width: 50%;
+    height: 75%;
+    float: left;
+}
+
+.current-value-value {
+    font-size: 6vw;
+}
+
+#sensor-name {
+    width: 100%;
+    height: 50%;
+    font-size: 3vw;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
