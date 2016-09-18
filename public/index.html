@@ -2,6 +2,7 @@
     <head>
         <title>Live weather</title>
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/loader.css">
     </head>
 
     <body onload="init();">
@@ -16,7 +17,7 @@
                     Humidity:<br /><span id=current-humidity-value class=current-value-value></span>
                 </div>
                 <div id=current-time>
-                    Last reading received on <span id=current-time-value></span>
+                    Last sensor readout received on <span id=current-time-value></span>
                 </div>
             </div>
         </div>
@@ -42,6 +43,17 @@
             <div class=card-content>
                 <canvas id="humiChart"></canvas>
             </div>
+        </div>
+
+        <div id=loading>
+            <div class="cssload-preloader cssload-loading">
+               <span class="cssload-slice"></span>
+               <span class="cssload-slice"></span>
+               <span class="cssload-slice"></span>
+               <span class="cssload-slice"></span>
+               <span class="cssload-slice"></span>
+               <span class="cssload-slice"></span>
+           </div>
         </div>
 
         <script src="js/moment.min.js"></script>

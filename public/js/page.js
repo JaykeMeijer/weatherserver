@@ -1,4 +1,5 @@
 function init() { 
+    show_loading();
     $.ajax({
         type: 'POST',
         url : 'http://jayke.nl:8888/web/',
@@ -6,6 +7,15 @@ function init() {
         success: handleDeviceList,
         error: handleError
     });
+}
+
+
+function show_loading(callback) {
+    $('#loading').slideDown(complete=callback); 
+}
+
+function hide_loading(callback) {
+    $('#loading').slideUp(complete=callback);
 }
 
 function handleDeviceList(data, textStatus, jqXHR) {
@@ -19,6 +29,7 @@ function handleDeviceList(data, textStatus, jqXHR) {
 }
 
 function get_info_for_device(device_id) {
+    show_loading();
     $('.devicebar-device').removeClass('devicebar-device-active');
     $('#devicebar-device-' + device_id).addClass('devicebar-device-active');
     $.ajax({
@@ -49,6 +60,8 @@ function handleDevice(data, textStatus, jqXHR) {
 }
 
 function handleReports(data, textStatus, jqXHR) {
+    $('#temp').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
+    $('#humi').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
     reports = JSON.parse(data);
     temperature = [];
     humidity = [];
@@ -73,11 +86,14 @@ function handleReports(data, textStatus, jqXHR) {
     measured = moment(reports[0].time);
     timestring = measured.format('D MMMM YYYY [at] HH:mm:ss') + ' (' + measured.fromNow() + ')'; 
     $('#current-time-value').text(timestring);
-    createGraph(temperature, '#tempChart', 'Temperature');
-    createGraph(humidity, '#humiChart', 'Humidity');
+
+    hide_loading(function() {
+        createGraph(temperature, '#tempChart', 'Temperature', '\u00B0C');
+        createGraph(humidity, '#humiChart', 'Humidity', '%');
+    });
 }
 
-function createGraph(data, canvas, label) {
+function createGraph(data, canvas, label, unit) {
     var graph_data = {
         datasets: [
             {
@@ -112,28 +128,23 @@ function createGraph(data, canvas, label) {
             scales: {
                 xAxes: [{
                     type: 'time',
+                }],
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: unit
+                    }
                 }]
+            },
+            legend: {
+                display: false
             }
         }
     });
+    $(canvas).parent().find('.graph-loading').remove();
 }
 
 function handleError(jqXHR, textStatus, error) {
     console.log(error);
-}
-
-function sendReport() {
-    var data = {temperature: $('#temp_send').val(),
-                humidity: $('#humi_send').val(),
-                voltage: $('#volt_send').val()};
-    var packet = {device: 1,
-                  type: 'store_reports',
-                  data: data};
-    $.ajax({
-        type: 'POST',
-        url: 'http://jayke.nl:8888/report/',
-        data: JSON.stringify(packet),
-        success: function() {location.reload()},
-        error: handleError
-    });
+    hide_loading();
 }
