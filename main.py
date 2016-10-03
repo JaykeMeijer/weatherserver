@@ -4,6 +4,7 @@ import tornado.web
 import json
 import reports
 import devices
+import database_cleanup
 
 
 class WebHandler(tornado.web.RequestHandler):
@@ -67,7 +68,15 @@ def configure():
         (r"/report/", ReportHandler)
     ], compress_response=True)
 
+
+def cleanup(ioloop):
+    database_cleanup.cleanup_loop()
+    ioloop.call_later(3600, cleanup)
+
+
 if __name__ == "__main__":
     server = configure()
     server.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
+    ioloop = tornado.ioloop.IOLoop.current()
+    cleanup(ioloop)
+    ioloop.start()

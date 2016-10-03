@@ -61,6 +61,17 @@ class Database:
         cur.close()
         return res
 
+    def get_all_device_ids(self):
+        cur = self.get_cur()
+        query = '''
+                SELECT id
+                FROM devices
+                '''
+        cur.execute(query)
+        res = cur.fetchall()
+        cur.close()
+        return res
+
     def get_reports_since(self, device_id, report_type, time, admin=False):
         cur = self.get_cur()
         query = '''
@@ -75,11 +86,11 @@ class Database:
         variables = {'device_id': device_id, 'seconds': time}
 
         if report_type is not None:
-            query += ' AND report_type = %(report_type)s'
+            query += 'AND reports.report_type = %(report_type)s\n'
             variables['report_type'] = report_type
 
         if not admin:
-            query += ' AND report_types.admin_feature = false'
+            query += 'AND report_types.admin_feature = false\n'
 
         query += 'ORDER BY time ASC'
         cur.execute(query, variables)
@@ -132,6 +143,19 @@ class Database:
         else:
             return rt['id']
 
+    def get_all_report_type_ids(self):
+        cur = self.get_cur()
+        query = '''
+                SELECT id
+                FROM report_types
+                '''
+
+        cur.execute(query)
+        res = cur.fetchall()
+        cur.close()
+        return res
+
+
     def store_report(self, device_id, report_type_id, value):
         cur = self.conn.cursor()
         query = '''
@@ -142,5 +166,24 @@ class Database:
                             'value': value})
         self.conn.commit()
         cur.close()
+
+    def delete_report(self, report_id):
+        cur = self.conn.cursor()
+        query = '''
+            DELETE FROM reports
+            WHERE id = %(report_id)s'''
+        cur.execute(query, {'report_id': report_id})
+        self.conn.commit()
+        cur.close()
+
+    def delete_reports(self, reports):
+        cur = self.conn.cursor()
+        query = '''
+            DELETE FROM reports
+            WHERE id IN %(reports)s'''
+        cur.execute(query, {'reports': tuple(reports)})
+        self.conn.commit()
+        cur.close()
+        
 
 database = Database()
