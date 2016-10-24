@@ -90,6 +90,7 @@ function handleReports(data, textStatus, jqXHR) {
     hide_loading(function() {
         createGraph(temperature, '#tempChart', 'Temperature', '\u00B0C');
         createGraph(humidity, '#humiChart', 'Humidity', '%');
+        createGraph(voltage, '#voltChart', 'Voltage', 'V');
     });
 }
 
