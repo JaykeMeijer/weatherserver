@@ -45,6 +45,7 @@ class ReportHandler(tornado.web.RequestHandler):
             data = json.loads(self.request.body)
         except ValueError:
             print("Invalid JSON packet received")
+            print(self.request.body)
             self.send_error(400)
             return
  
@@ -71,8 +72,7 @@ def configure():
 
 def cleanup(ioloop):
     database_cleanup.cleanup_loop()
-    ioloop.call_later(3600, cleanup)
-
+    ioloop.call_later(3600, cleanup, ioloop)
 
 if __name__ == "__main__":
     server = configure()

@@ -3,10 +3,18 @@ import datetime
 import pprint
 
 
+def get_now():
+    now = datetime.datetime.now()
+    now_rounded = now - datetime.timedelta(minutes=now.minute,
+                                           seconds=now.second,
+                                           microseconds=now.microsecond)
+    return now_rounded
+
+
 def cleanup_lt_2(device_id, report_type):
     print("\t\t2 hour cleanup")
-    now_2 = datetime.datetime.now() - datetime.timedelta(hours=2)
-    now_4 = datetime.datetime.now() - datetime.timedelta(hours=4)
+    now_2 = get_now() - datetime.timedelta(hours=2)
+    now_4 = get_now() - datetime.timedelta(hours=4)
     items = database.database.get_reports_between(
         device_id,
         report_type,
@@ -16,7 +24,7 @@ def cleanup_lt_2(device_id, report_type):
     if len(items) == 0:
         return
 
-    intervals = build_intervals(items, datetime.datetime.now(), 10)
+    intervals = build_intervals(items, now_2, 10)
 
     remove = []
     for i in intervals:
@@ -27,8 +35,8 @@ def cleanup_lt_2(device_id, report_type):
 
 def cleanup_lt_24(device_id, report_type):
     print("\t\t1 day cleanup")
-    now_4 = datetime.datetime.now() - datetime.timedelta(hours=4)
-    now_24 = datetime.datetime.now() - datetime.timedelta(hours=24)
+    now_4 = get_now() - datetime.timedelta(hours=4)
+    now_24 = get_now() - datetime.timedelta(hours=24)
 
     items = database.database.get_reports_between(
         device_id,
@@ -39,7 +47,7 @@ def cleanup_lt_24(device_id, report_type):
     if len(items) == 0:
         return
 
-    intervals = build_intervals(items, now_4, 10)
+    intervals = build_intervals(items, now_4, 30)
 
     remove = []
     for i in intervals:
@@ -50,8 +58,8 @@ def cleanup_lt_24(device_id, report_type):
 
 def cleanup_lt_168(device_id, report_type):
     print("\t\t1 week cleanup")
-    now_24 = datetime.datetime.now() - datetime.timedelta(hours=24)
-    now_168 = datetime.datetime.now() - datetime.timedelta(hours=168)
+    now_24 = get_now() - datetime.timedelta(hours=24)
+    now_168 = get_now() - datetime.timedelta(hours=168)
     items = database.database.get_reports_between(
         device_id,
         report_type,
