@@ -1,3 +1,10 @@
+reports = [];
+temperature = [];
+humidity = [];
+voltage = [];
+charts = {};
+refresh = 10000;
+
 function init() { 
     show_loading();
     $.ajax({
@@ -8,7 +15,6 @@ function init() {
         error: handleError
     });
 }
-
 
 function show_loading(callback) {
     $('#loading').slideDown(complete=callback); 
@@ -44,11 +50,38 @@ function get_info_for_device(device_id) {
         type: 'POST',
         url : 'http://jayke.nl:8888/web/',
         data: JSON.stringify({'type': 'get_report', 'data':{'device': device_id, 'last': 864000}}),
-        //data: JSON.stringify({'type': 'get_report', 'data':{'device': 'test', 'start': '2016-09-13 08:00:00',
-        //                      'end': '2016-09-13 08:20:00'}}),
         success: handleReports,
         error: handleError
    });
+   setTimeout(function() {
+       update(device_id);
+   }, refresh);
+}
+
+function update(device_id) {
+    // get latest report
+    latest = reports[0];
+    $.ajax({
+        type: 'POST',
+        url : 'http://jayke.nl:8888/web/',
+        data: JSON.stringify({
+            'type': 'get_report',
+            'data': {
+                'device': device_id,
+                'start': moment(latest.time).add(1, 'ms').format('YYYY-MM-DD HH:mm:ss.SSSSSS')
+            }
+        }),
+        success: handleUpdates,
+        error: handleError
+   });
+   setTimeout(function() {
+       update(device_id);
+   }, refresh);
+}
+
+function handleUpdates(data, textStatus, jqXHR) {
+    appendReports(JSON.parse(data)); 
+    updateCurrent();
 }
 
 function handleDevice(data, textStatus, jqXHR) {
@@ -62,36 +95,48 @@ function handleDevice(data, textStatus, jqXHR) {
 function handleReports(data, textStatus, jqXHR) {
     $('#temp').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
     $('#humi').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
-    reports = JSON.parse(data);
-    temperature = [];
-    humidity = [];
-    voltage = [];
-    reports.reverse();
-    for (i = 0; i < reports.length; i++) {
-        report = reports[i];
-        switch(report.report_type) {
-            case 'temperature':
-                temperature.push({'x': report.time, 'y': parseFloat(report.value)});
-                break;
-            case 'humidity':
-                humidity.push({'x': report.time, 'y': parseFloat(report.value)});
-                break;
-            case 'voltage':
-                voltage.push({'x': report.time, 'y': parseFloat(report.value)});
-                break;
-        }
-    }
-    $('#current-temperature-value').html(temperature[0].y + '&deg;C');
-    $('#current-humidity-value').html(humidity[0].y + '%');
-    measured = moment(reports[0].time);
-    timestring = measured.format('D MMMM YYYY [at] HH:mm:ss') + ' (' + measured.fromNow() + ')'; 
-    $('#current-time-value').text(timestring);
+    new_reports = JSON.parse(data);
+    appendReports(new_reports);
+    updateCurrent();
 
     hide_loading(function() {
         createGraph(temperature, '#tempChart', 'Temperature', '\u00B0C');
         createGraph(humidity, '#humiChart', 'Humidity', '%');
         createGraph(voltage, '#voltChart', 'Voltage', 'V');
     });
+}
+
+function appendReports(new_reports, update=false) {
+    //new_reports.reverse();
+    for (i = 0; i < new_reports.length; i++) {
+        report = new_reports[i];
+        reports.unshift(report)
+        switch(report.report_type) {
+            case 'temperature':
+                chart = '#tempChart';
+                temperature.unshift({'x': report.time, 'y': parseFloat(report.value)});
+                break;
+            case 'humidity':
+                chart = '#humiChart';
+                humidity.unshift({'x': report.time, 'y': parseFloat(report.value)});
+                break;
+            case 'voltage':
+                chart = '#voltChart';
+                voltage.unshift({'x': report.time, 'y': parseFloat(report.value)});
+                break;
+        }
+        if (update) {
+            charts[chart].addData({'x': report.time, 'y': parseFloat(report.value)});
+        }
+    }
+}
+
+function updateCurrent() {
+    $('#current-temperature-value').html(temperature[0].y + '&deg;C');
+    $('#current-humidity-value').html(humidity[0].y + '%');
+    measured = moment(reports[0].time);
+    timestring = measured.format('D MMMM YYYY [at] HH:mm:ss') + ' (' + measured.fromNow() + ')'; 
+    $('#current-time-value').text(timestring);
 }
 
 function createGraph(data, canvas, label, unit) {
@@ -142,6 +187,7 @@ function createGraph(data, canvas, label, unit) {
             }
         }
     });
+    charts[canvas] = myLineChart;
     $(canvas).parent().find('.graph-loading').remove();
 }
 
