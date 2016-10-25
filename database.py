@@ -109,6 +109,8 @@ class Database:
                 WHERE device = %(device_id)s
                 AND time BETWEEN %(start)s::timestamp AND %(end)s::timestamp
                 '''
+        if end is None:
+            end = 'NOW()'
         variables = {'device_id': device_id, 'start': start, 'end': end}
 
         if report_type is not None:

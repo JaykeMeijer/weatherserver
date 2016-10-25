@@ -55,10 +55,10 @@ def handle_get_reports(data):
         reports = get_reports(device_id,
                               last=data['last'],
                               report_type=rt_id)
-    elif 'start' in data and 'end' in data:
+    elif 'start' in data:
         reports = get_reports(device_id,
                               start=data['start'],
-                              end=data['end'],
+                              end=data.get('end', None),
                               report_type=rt_id)
     else:
         reports = get_reports(device_id, last=3600)
