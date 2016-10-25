@@ -4,6 +4,7 @@ humidity = [];
 voltage = [];
 charts = {};
 refresh = 10000;
+timeout = null;
 
 function init() { 
     show_loading();
@@ -14,6 +15,31 @@ function init() {
         success: handleDeviceList,
         error: handleError
     });
+}
+
+function loadDevice(device) {
+    show_loading();
+
+    if (timeout != null) {
+        clearTimeout(timeout);
+        timeout = null;
+    }
+ 
+    tcv = $('#tempChart')[0];
+    tcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
+    hcv = $('#humiChart')[0];
+    hcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
+    vcv = $('#voltChart')[0];
+    vcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
+    reports = [];
+    temperature = [];
+    humidity = [];
+    voltage = [];
+    charts = {};
+    $('#temp').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
+    $('#humi').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
+    $('#volt').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
+    get_info_for_device(device);
 }
 
 function show_loading(callback) {
@@ -28,10 +54,11 @@ function handleDeviceList(data, textStatus, jqXHR) {
     devices = JSON.parse(data);
     for (var i = 0; i < devices.length; i++) {
         device = devices[i];
-        $('#devicebar').append('<div class=devicebar-device id=devicebar-device-' + device.id + '>' +
+        $('#devicebar').append('<div class=devicebar-device id=devicebar-device-' + device.id +
+                               ' onclick="loadDevice(' + device.id + ');">' +
                                device.name + '</div>');
     }
-    get_info_for_device(1);
+    loadDevice(1);
 }
 
 function get_info_for_device(device_id) {
@@ -53,14 +80,18 @@ function get_info_for_device(device_id) {
         success: handleReports,
         error: handleError
    });
-   setTimeout(function() {
+   timeout = setTimeout(function() {
        update(device_id);
    }, refresh);
 }
 
 function update(device_id) {
     // get latest report
-    latest = reports[0];
+    if (reports.length > 0) {
+        latest = reports[0];
+    } else {
+        latest = {'time': '1970-01-01 00:00:00'};
+    }
     $.ajax({
         type: 'POST',
         url : 'http://jayke.nl:8888/web/',
@@ -74,7 +105,7 @@ function update(device_id) {
         success: handleUpdates,
         error: handleError
    });
-   setTimeout(function() {
+    timeout = setTimeout(function() {
        update(device_id);
    }, refresh);
 }
@@ -93,8 +124,6 @@ function handleDevice(data, textStatus, jqXHR) {
 }
 
 function handleReports(data, textStatus, jqXHR) {
-    $('#temp').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
-    $('#humi').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
     new_reports = JSON.parse(data);
     appendReports(new_reports);
     updateCurrent();
@@ -132,11 +161,17 @@ function appendReports(new_reports, update=false) {
 }
 
 function updateCurrent() {
-    $('#current-temperature-value').html(temperature[0].y + '&deg;C');
-    $('#current-humidity-value').html(humidity[0].y + '%');
-    measured = moment(reports[0].time);
-    timestring = measured.format('D MMMM YYYY [at] HH:mm:ss') + ' (' + measured.fromNow() + ')'; 
-    $('#current-time-value').text(timestring);
+    t = (temperature.length > 0 ? temperature[0].y + '&deg;C' : '?');
+    $('#current-temperature-value').html(t);
+    h = (humidity.length > 0 ? humidity[0].y + '%' : '?');
+    $('#current-humidity-value').html(h);
+    if (reports.length > 0) {
+        measured = moment(reports[0].time);
+        timestring = measured.format('D MMMM YYYY [at] HH:mm:ss') + ' (' + measured.fromNow() + ')'; 
+        $('#current-time-value').text(timestring);
+    } else {
+        $('#current-time-value').text('No reports received');
+    }
 }
 
 function createGraph(data, canvas, label, unit) {
