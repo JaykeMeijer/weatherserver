@@ -33,21 +33,21 @@
         </div>
 
         <div id=temp class=card>
-            <div class=card-title>Temperature</div>
+            <div class=card-title onclick="showList('temperature');">Temperature</div>
             <div class=card-content>
                 <canvas id="tempChart"></canvas>
             </div>
         </div>
 
         <div id=humi class=card>
-            <div class=card-title>Humidity</div>
+            <div class=card-title onclick="showList('humidity');">Humidity</div>
             <div class=card-content>
                 <canvas id="humiChart"></canvas>
             </div>
         </div>
 
         <div id=volt class=card>
-            <div class=card-title>Voltage</div>
+            <div class=card-title onclick="showList('voltage');">Voltage</div>
             <div class=card-content>
                 <canvas id="voltChart"></canvas>
             </div>
@@ -62,6 +62,9 @@
                <span class="cssload-slice"></span>
                <span class="cssload-slice"></span>
            </div>
+        </div>
+
+        <div id=listview onclick="hideList();">
         </div>
 
         <script src="js/moment.min.js"></script>

@@ -230,3 +230,36 @@ function handleError(jqXHR, textStatus, error) {
     console.log(error);
     hide_loading();
 }
+
+function getReports(type) {
+    switch(type) {
+        case 'temperature': return temperature;
+        case 'humidity': return humidity;
+        case 'voltage': return voltage;
+        default: return [];
+    }
+}
+
+function showList(type) {
+    if ($('#listview').is(':visible')) {
+        hideList();
+    }
+    liststring = '<table>';
+    report_list = jQuery.extend([], getReports(type));
+    report_list.reverse();
+    for (var i = 0; i < report_list.length; i++) {
+        var r = report_list[i];
+        liststring +=
+            '<tr>' +
+                '<td>' + r.x + '</td>' +
+                '<td>' + r.y + '</td>' +
+            '</tr>';
+    }
+    liststring += '</table>';
+    $('#listview').html(liststring);
+    $('#listview').slideDown();
+}
+
+function hideList() {
+    $('#listview').slideUp();
+}
