@@ -256,7 +256,8 @@ function showList(type) {
             '</tr>';
     }
     liststring += '</table>';
-    $('#listview').html(liststring);
+    $('#listview_title').text(type);
+    $('#listview_content').html(liststring);
     $('#listview').slideDown();
 }
 
