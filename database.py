@@ -38,7 +38,7 @@ class Database:
 
     def get_device(self, device_id):
         cur = self.get_cur()
-        query = '''SELECT name, location, timezone
+        query = '''SELECT name, prettyname, location, timezone
                    FROM devices
                    WHERE id=%(id)s'''
         cur.execute(query, {'id': device_id})
@@ -53,7 +53,7 @@ class Database:
     def get_devices(self):
         cur = self.get_cur()
         query = '''
-                SELECT id, name
+                SELECT id, prettyname
                 FROM devices
                 '''
         cur.execute(query)
@@ -114,12 +114,13 @@ class Database:
         variables = {'device_id': device_id, 'start': start, 'end': end}
 
         if report_type is not None:
-            query += ' AND report_type = %(report_type)s'
+            query += ' AND report_type = %(report_type)s\n'
             variables['report_type'] = report_type
 
         if not admin:
-            query += ' AND report_types.admin_feature = false'
+            query += ' AND report_types.admin_feature = false\n'
 
+        query += 'ORDER BY time ASC'
         cur.execute(query, variables)
         res = cur.fetchall()
         cur.close()

@@ -1,5 +1,5 @@
 BEGIN;
-INSERT INTO devices (name, location, timezone) VALUES ('test', 'Ouderkerk', 'Europe/Amsterdam');
+INSERT INTO devices (name, prettyname, location, timezone) VALUES ('test', 'Test', 'Ouderkerk', 'Europe/Amsterdam');
 
 INSERT INTO reports (device, report_type, value, time) VALUES (1, 1, '98', '2016-09-13 08:00:00.0');
 INSERT INTO reports (device, report_type, value, time) VALUES (1, 2, '30', '2016-09-13 08:00:00.0');

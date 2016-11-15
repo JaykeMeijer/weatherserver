@@ -8,6 +8,7 @@ CREATE TABLE report_types (
 CREATE TABLE devices (
     id serial PRIMARY KEY,
     name varchar(255) UNIQUE NOT NULL,
+    prettyname varchar(255),
     location varchar(255),
     timezone varchar(255)
 );

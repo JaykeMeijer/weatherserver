@@ -139,7 +139,7 @@ function handleUpdates(data, textStatus, jqXHR) {
 
 function handleDevice(data, textStatus, jqXHR) {
     device = JSON.parse(data);
-    $('#sensor-name').text(device.name);
+    $('#sensor-name').text(device.prettyname);
     $('#sensor-location-value').text(device.location);
     $('#sensor-timezone-value').text(
         device.timezone + ' (UTC ' + moment().tz(device.timezone).format('Z') + ')');

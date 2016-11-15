@@ -7,7 +7,7 @@ def get_devices():
     devices = []
     for d in devices_db:
         devices.append({'id': d['id'],
-                        'name': d['name']})
+                        'name': d['prettyname']})
     return devices
 
 
@@ -17,8 +17,10 @@ def get_device(device_id):
         return None
 
     return {'name': device['name'],
+            'prettyname': device['prettyname'],
             'location': device['location'],
             'timezone': device['timezone']}
+
 def get_id(name_or_id):
     try:
         device_id = int(name_or_id)
