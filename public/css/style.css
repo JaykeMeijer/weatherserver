@@ -79,8 +79,10 @@ body {
     width: 97%;
     height: 10%;
     padding-left: 3%;
+    margin: 0px;
     font-style: italic;
     font-size: 3vh;
+    display: flex;
 }
 
 #listview_content td {
@@ -88,10 +90,10 @@ body {
 }
 
 #listview_content {
-    padding: 30px;
+    position: relative;
+    padding-left: 30px;
     overflow: auto;
     height: 90%;
-    width: 100%;
 }
 
 .card:hover {
