@@ -25,12 +25,23 @@ function loadDevice(device) {
         timeout = null;
     }
  
-    tcv = $('#tempChart')[0];
-    tcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
-    hcv = $('#humiChart')[0];
+
+    chartids = ['#tempChart', '#humiChart', '#voltChart'];
+    for (var i = 0; i < chartids.length; i++) {
+        cid = chartids[i];
+        cv = $(cid)[0];
+        cv.getContext('2d').clearRect(0, 0, cv.width, cv.height);
+        if (cid in charts) {
+            //charts[cid].removeData();
+            charts[cid].destroy();
+        }
+    }
+    /*hcv = $('#humiChart')[0];
     hcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
     vcv = $('#voltChart')[0];
     vcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
+    charts['#tempChart'].removeData();
+    charts['#tempChart'].destroy();*/
     reports = [];
     temperature = [];
     humidity = [];
