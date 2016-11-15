@@ -36,12 +36,6 @@ function loadDevice(device) {
             charts[cid].destroy();
         }
     }
-    /*hcv = $('#humiChart')[0];
-    hcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
-    vcv = $('#voltChart')[0];
-    vcv.getContext('2d').clearRect(0, 0, tcv.width, tcv.height);
-    charts['#tempChart'].removeData();
-    charts['#tempChart'].destroy();*/
     reports = [];
     temperature = [];
     humidity = [];
@@ -51,6 +45,7 @@ function loadDevice(device) {
     $('#humi').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
     $('#volt').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
     get_info_for_device(device);
+    document.cookie = device;
 }
 
 function show_loading(callback) {
@@ -62,14 +57,30 @@ function hide_loading(callback) {
 }
 
 function handleDeviceList(data, textStatus, jqXHR) {
-    devices = JSON.parse(data);
+    function compare(a,b) {
+        a = a.name.toLowerCase();
+        b = b.name.toLowerCase();
+        if (a < b)
+          return -1;
+        if (a > b)
+            return 1;
+          return 0;
+    }
+
+    devices = JSON.parse(data).sort(compare);
     for (var i = 0; i < devices.length; i++) {
         device = devices[i];
         $('#devicebar').append('<div class=devicebar-device id=devicebar-device-' + device.id +
                                ' onclick="loadDevice(' + device.id + ');">' +
                                device.name + '</div>');
     }
-    loadDevice(1);
+
+    if (document.cookie != '') {
+        console.log(document.cookie);
+        loadDevice(document.cookie);
+    } else {
+        loadDevice(1);
+    }
 }
 
 function get_info_for_device(device_id) {
