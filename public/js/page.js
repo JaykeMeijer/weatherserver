@@ -1,10 +1,11 @@
-reports = [];
-temperature = [];
-humidity = [];
-voltage = [];
-charts = {};
-refresh = 10000;
-timeout = null;
+var reports = [];
+var temperature = [];
+var humidity = [];
+var voltage = [];
+var charts = {};
+var alldevices = {};
+var refresh = 10000;
+var timeout = null;
 
 function init() { 
     show_loading();
@@ -70,17 +71,19 @@ function handleDeviceList(data, textStatus, jqXHR) {
     devices = JSON.parse(data).sort(compare);
     for (var i = 0; i < devices.length; i++) {
         device = devices[i];
+        alldevices[device.id] = device;       
         $('#devicebar').append('<div class=devicebar-device id=devicebar-device-' + device.id +
                                ' onclick="loadDevice(' + device.id + ');">' +
                                device.name + '</div>');
     }
 
     if (document.cookie != '') {
-        console.log(document.cookie);
-        loadDevice(document.cookie);
-    } else {
-        loadDevice(1);
+        if (parseInt(document.cookie) in alldevices) {
+            loadDevice(document.cookie);
+            return
+        }
     }
+    loadDevice(1);
 }
 
 function get_info_for_device(device_id) {
@@ -89,7 +92,7 @@ function get_info_for_device(device_id) {
     $('#devicebar-device-' + device_id).addClass('devicebar-device-active');
     $.ajax({
         type: 'POST',
-        url : 'http://jayke.nl:8888/web/',
+        url: 'http://jayke.nl:8888/web/',
         data: JSON.stringify({'type': 'get_device', 'data':{'device': device_id}}),
         success: handleDevice,
         error: handleError
