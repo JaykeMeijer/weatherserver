@@ -33,7 +33,6 @@ function loadDevice(device) {
         cv = $(cid)[0];
         cv.getContext('2d').clearRect(0, 0, cv.width, cv.height);
         if (cid in charts) {
-            //charts[cid].removeData();
             charts[cid].destroy();
         }
     }
@@ -83,7 +82,7 @@ function handleDeviceList(data, textStatus, jqXHR) {
             return
         }
     }
-    loadDevice(1);
+    loadDevice(devices[0].id);
 }
 
 function get_info_for_device(device_id) {
@@ -226,6 +225,23 @@ function createGraph(data, canvas, label, unit) {
         ]
     }
 
+    // get min and max values
+    var min = 1000;
+    var max = -1000;
+    for (var i = 0; i < data.length; i++) {
+        if (data[i].y < min) {
+            min = data[i].y;
+        }
+        if (data[i].y > max) {
+            max = data[i].y;
+        }           
+    }
+    // Determine delta between min and max and use 1% of that as
+    // buffer around the values
+    var delta = max - min;
+    max = max + delta * 0.01;
+    min = min - delta * 0.01;
+
     var ctx = $(canvas);
     var myLineChart = new Chart(ctx, {
         type: 'line',
@@ -239,11 +255,23 @@ function createGraph(data, canvas, label, unit) {
                     scaleLabel: {
                         display: true,
                         labelString: unit
+                    },
+                    ticks: {
+                        suggestedMin: min,
+                        suggestedMax: max
                     }
                 }]
             },
             legend: {
                 display: false
+            },
+            pan: {
+                enabled: true,
+                mode: 'x'
+            },
+            zoom: {
+                enabled: true,
+                mode: 'x'
             }
         }
     });
