@@ -6,8 +6,17 @@ var charts = {};
 var alldevices = {};
 var refresh = 10000;
 var timeout = null;
+var interval = null;
+var active_device = 1;
+var cookie = new Cookiemonster();
 
 function init() { 
+    interval = cookie.get('interval');
+    if (interval == null) {
+        interval = 604800;
+    } else {
+        interval = parseInt(interval);
+    }
     show_loading();
     $.ajax({
         type: 'POST',
@@ -16,6 +25,62 @@ function init() {
         success: handleDeviceList,
         error: handleError
     });
+}
+
+function Cookiemonster() {
+    this.data = {};
+    self = this; 
+    self.expiry = new Date();
+    self.expiry.setTime(self.expiry.getTime() + (10000*24*60*60*1000));
+
+    this.get = function(key) {
+        if (key in self.data) {
+            return self.data[key];
+        } else {
+            return null;
+        }
+    }
+
+    this.set = function(key, value) {
+        self.data[key] = value;
+        self.write();
+    }
+
+    this.write = function() {
+        for (var key in self.data) {
+            if (self.data.hasOwnProperty(key) && key != 'expires'
+                    && key != undefined) {
+                document.cookie = 
+                    key + '=' + self.data[key] + '; expires=' +
+                    self.expiry.toUTCString();
+            }
+        }
+    }
+
+    content = document.cookie;
+    if (content != '') {
+        content_s = content.split('; ');
+        for (var i = 0; i < content_s.length; i++) {
+            pair = content_s[i].split('=');
+            this.data[pair[0]] = pair[1];
+        }
+    }
+}
+
+function toggleMenu() {
+    if ($('#menu').is(':visible')) {
+        $('#menu').slideUp();
+    } else {
+        $('#menu').slideDown();
+    }
+}
+
+function timeframe(seconds) {
+    $('#menu').slideUp();
+
+    interval = seconds;
+    loadDevice(active_device);
+    cookie.set('interval', seconds);
 }
 
 function loadDevice(device) {
@@ -45,7 +110,8 @@ function loadDevice(device) {
     $('#humi').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
     $('#volt').find('.card-content').append('<div class=graph-loading>Your graph is being created...</div>');
     get_info_for_device(device);
-    document.cookie = device;
+    cookie.set('device', device);
+    active_device = device;
 }
 
 function show_loading(callback) {
@@ -71,14 +137,17 @@ function handleDeviceList(data, textStatus, jqXHR) {
     for (var i = 0; i < devices.length; i++) {
         device = devices[i];
         alldevices[device.id] = device;       
-        $('#devicebar').append('<div class=devicebar-device id=devicebar-device-' + device.id +
-                               ' onclick="loadDevice(' + device.id + ');">' +
-                               device.name + '</div>');
+        $('#devicebar #devices').append(
+            '<div class=devicebar-device id=devicebar-device-' + device.id +
+            ' onclick="loadDevice(' + device.id + ');">' +
+            device.name + '</div>');
     }
 
-    if (document.cookie != '') {
-        if (parseInt(document.cookie) in alldevices) {
-            loadDevice(document.cookie);
+    cDevice = cookie.get('device');
+    if (cDevice != null) {
+        cDevice = parseInt(cDevice);
+        if (cDevice in alldevices) {
+            loadDevice(cDevice);
             return
         }
     }
@@ -100,7 +169,7 @@ function get_info_for_device(device_id) {
     $.ajax({
         type: 'POST',
         url : 'http://jayke.nl:8888/web/',
-        data: JSON.stringify({'type': 'get_report', 'data':{'device': device_id, 'last': 864000}}),
+        data: JSON.stringify({'type': 'get_report', 'data':{'device': device_id, 'last': interval}}),
         success: handleReports,
         error: handleError
    });
