@@ -336,6 +336,10 @@ function createGraph(data, canvas, label, unit) {
             scales: {
                 xAxes: [{
                     type: 'time',
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
                 }],
                 yAxes: [{
                     scaleLabel: {
@@ -362,6 +366,7 @@ function createGraph(data, canvas, label, unit) {
         }
     });
     charts[canvas] = myLineChart;
+    myLineChart.resetZoom();
     $(canvas).parent().find('.graph-loading').remove();
 }
 
