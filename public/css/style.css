@@ -25,6 +25,7 @@ body {
     float: right;
     padding-top: 5px;
     padding-right: 10px;
+    cursor: pointer;
 }
 
 #menu {
@@ -33,7 +34,7 @@ body {
     top: 40px;
     right: 0px;
     background-color: #313131;
-    min-width: 300px;
+    width: 300px;
     padding-bottom: 20px;
     color: #ffffff;
     display:none;
@@ -56,6 +57,7 @@ body {
     -moz-border-radius: 3px;
     border-radius: 3px;
     z-index: 800;
+    cursor: pointer;
 }
 
 #menu .button:hover {
@@ -84,12 +86,40 @@ body {
     background-color: #737373;
 }
 
+#devices-mobile-active {
+    width: 200px;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.devicebar-device-mobile {
+    position: relative;
+    padding-left: 10px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+}
+
+#devices-mobile-list {
+    position: absolute;
+    left: 0px;
+    top: 40px;
+    background-color: #313131;
+    min-width: 300px;
+    color: #ffffff;
+    display:none;
+    z-index: 900;
+}
+
 .card {
     background-color: #fdffe8;
     margin-left: 2vw;
     margin-top: 4vh;
-    width: 47%;
-    min-width: 400px;
+    /*width: 47%;
+    min-width: 400px;*/
     height: 43vh;
     float: left;
     z-index: 500;
@@ -98,6 +128,43 @@ body {
     -moz-box-shadow: 0px 0px 33px -6px rgba(0,0,0,0.75);
     box-shadow: 0px 0px 33px -6px rgba(0,0,0,0.75);
     transition: box-shadow 0.25s ease-in-out;
+}
+
+@media screen and (max-width:1080px) {
+    .card {
+        width: 95%;
+    }
+
+    #devices {
+        display: none;
+    }
+
+    #devices-mobile {
+        display: block;
+        float: left;
+    }
+
+    .current-value-value {
+        font-size: 15vw;
+    }
+}
+
+@media screen and (min-width:1081px) {
+    .card {
+        width: 47%;
+    }
+
+    #devices {
+        display:block;
+    }
+
+    #devices-mobile {
+        display: none;
+    }
+
+    .current-value-value {
+        font-size: 75pt;
+    }
 }
 
 #listview {
@@ -168,23 +235,19 @@ body {
 
 #current-time {
     width: 100%;
-    height: 25%;
+    height: 30%;
 }
 
 .current-value {
     width: 50%;
-    height: 75%;
+    height: 70%;
     float: left;
-}
-
-.current-value-value {
-    font-size: 6vw;
 }
 
 #sensor-name {
     width: 100%;
     height: 50%;
-    font-size: 3vw;
+    font-size: 6vh;
 }
 
 canvas {

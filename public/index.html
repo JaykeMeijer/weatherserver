@@ -4,11 +4,16 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
         <link rel="stylesheet" type="text/css" href="css/loader.css">
         <link rel="icon" type="image/ico"href="images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
 
     <body onload="init();">
         <div id=devicebar>
             <div id=devices></div>
+            <div id=devices-mobile>
+                <div id=devices-mobile-active onclick="toggleDevMenu();"></div>
+                <div id=devices-mobile-list></div>
+            </div>
             <div id=menubutton onclick="toggleMenu();">
                 <i class="fa fa-bars fa-2x"></i>
             </div>
@@ -21,7 +26,7 @@
             <div class="button" onclick="timeframe(2678400)">1 month</div>
             <div class="button" onclick="timeframe(31536000)">1 year</div>
         </div>
-        <div id=current class=card>
+        <div id=current class="card card-width">
             <div class=card-title>Current</div>
             <div class=card-content>
                 <div class=current-value>
@@ -36,7 +41,7 @@
             </div>
         </div>
 
-        <div id=sensor class=card>
+        <div id=sensor class="card card-width">
             <div class=card-title>Sensor information</div>
             <div class=card-content>
                 <div id=sensor-name></div>
@@ -45,21 +50,21 @@
             </div>
         </div>
 
-        <div id=temp class=card>
+        <div id=temp class="card card-width">
             <div class=card-title onclick="showList('temperature');">Temperature</div>
             <div class=card-content>
                 <canvas id="tempChart"></canvas>
             </div>
         </div>
 
-        <div id=humi class=card>
+        <div id=humi class="card card-width">
             <div class=card-title onclick="showList('humidity');">Humidity</div>
             <div class=card-content>
                 <canvas id="humiChart"></canvas>
             </div>
         </div>
 
-        <div id=volt class=card>
+        <div id=volt class="card card-width">
             <div class=card-title onclick="showList('voltage');">Voltage</div>
             <div class=card-content>
                 <canvas id="voltChart"></canvas>

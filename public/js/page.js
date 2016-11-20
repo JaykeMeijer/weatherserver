@@ -75,6 +75,14 @@ function toggleMenu() {
     }
 }
 
+function toggleDevMenu() {
+    if ($('#devices-mobile-list').is(':visible')) {
+        $('#devices-mobile-list').slideUp();
+    } else {
+        $('#devices-mobile-list').slideDown();
+    }
+}
+
 function timeframe(seconds) {
     $('#menu').slideUp();
 
@@ -141,6 +149,10 @@ function handleDeviceList(data, textStatus, jqXHR) {
             '<div class=devicebar-device id=devicebar-device-' + device.id +
             ' onclick="loadDevice(' + device.id + ');">' +
             device.name + '</div>');
+        $('#devices-mobile-list').append(
+            '<div class=devicebar-device-mobile id=devicebar-device-mobile-' + device.id +
+            ' onclick="loadDevice(' + device.id + ');toggleDevMenu();">' +
+            device.name + '</div>');
     }
 
     cDevice = cookie.get('device');
@@ -158,6 +170,10 @@ function get_info_for_device(device_id) {
     show_loading();
     $('.devicebar-device').removeClass('devicebar-device-active');
     $('#devicebar-device-' + device_id).addClass('devicebar-device-active');
+
+    $('.devicebar-device-mobile').removeClass('devicebar-device-active');
+    $('#devicebar-device-mobile-' + device_id).addClass('devicebar-device-active');
+
     $.ajax({
         type: 'POST',
         url: 'http://jayke.nl:8888/web/',
@@ -210,6 +226,7 @@ function handleUpdates(data, textStatus, jqXHR) {
 
 function handleDevice(data, textStatus, jqXHR) {
     device = JSON.parse(data);
+    $('#devices-mobile-active').text(device.prettyname);
     $('#sensor-name').text(device.prettyname);
     $('#sensor-location-value').text(device.location);
     $('#sensor-timezone-value').text(
