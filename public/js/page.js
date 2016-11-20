@@ -78,8 +78,10 @@ function toggleMenu() {
 function toggleDevMenu() {
     if ($('#devices-mobile-list').is(':visible')) {
         $('#devices-mobile-list').slideUp();
+        $('#devices-mobile-icon').html('<i class="fa fa-caret-down fa-2x"></i>');
     } else {
         $('#devices-mobile-list').slideDown();
+        $('#devices-mobile-icon').html('<i class="fa fa-caret-up fa-2x"></i>');
     }
 }
 
