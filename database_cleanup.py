@@ -15,6 +15,7 @@ def cleanup_lt_2(device_id, report_type):
     print("\t\t2 hour cleanup")
     now_2 = get_now() - datetime.timedelta(hours=2)
     now_4 = get_now() - datetime.timedelta(hours=4)
+    print "Working between %s and %s" % (now_4, now_2)
     items = database.database.get_reports_between(
         device_id,
         report_type,
@@ -37,7 +38,7 @@ def cleanup_lt_24(device_id, report_type):
     print("\t\t1 day cleanup")
     now_4 = get_now() - datetime.timedelta(hours=4)
     now_24 = get_now() - datetime.timedelta(hours=24)
-
+    print "Working between %s and %s" % (now_24, now_4)
     items = database.database.get_reports_between(
         device_id,
         report_type,
@@ -60,6 +61,7 @@ def cleanup_lt_168(device_id, report_type):
     print("\t\t1 week cleanup")
     now_24 = get_now() - datetime.timedelta(hours=24)
     now_168 = get_now() - datetime.timedelta(hours=168)
+    print "Working between %s and %s" % (now_168, now_24)
     items = database.database.get_reports_between(
         device_id,
         report_type,
@@ -83,10 +85,8 @@ def cleanup_lt_168(device_id, report_type):
 def cleanup_loop():
     for d in database.database.get_all_device_ids():
         di = d['id']
-        print('Cleanup device id %d' % di)
         for r in database.database.get_all_report_type_ids():
             ri = r['id']
-            print('\tCleanup report id %d' % ri)
             cleanup_lt_2(di, ri)
             cleanup_lt_24(di, ri)
             cleanup_lt_168(di, ri)
@@ -101,21 +101,20 @@ def build_intervals(items, start, interval):
     results = []
     td = datetime.timedelta(minutes=interval)
     current_limit = start - td
-    group = []
     number_items = len(items)
     handled = 0
     itemsr = items[::-1]
 
     while number_items > handled:
+        group = []
         for i in itemsr[handled:]:
-            if i['time'] < current_limit:
+            if i['time'] <= current_limit:
                 break
             else:
                 group.append(i)
                 handled += 1
 
         current_limit -= td
-        results.append(group)
-        group = []
+        results.append(group[::-1])
 
     return results
