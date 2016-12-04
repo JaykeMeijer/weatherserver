@@ -20,9 +20,15 @@ class WebHandler(tornado.web.RequestHandler):
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
     def post(self):
+        referer = self.request.headers.get('Referer')
+        if '?' in referer:
+            view = referer.split('?')[-1].lower()
+        else:
+            view = None
+
         data = json.loads(self.request.body)
         if 'data' in data and data['type'] in self.handlers:
-            success, response = self.handlers[data['type']](data['data'])
+            success, response = self.handlers[data['type']](data['data'], view)
             if success == 200:
                 self.write(response)
             else:

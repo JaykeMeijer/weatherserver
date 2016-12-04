@@ -2,8 +2,8 @@ from database import database
 import json
 
 
-def get_devices():
-    devices_db = database.get_devices()
+def get_devices(view):
+    devices_db = database.get_devices(view)
     devices = []
     for d in devices_db:
         devices.append({'id': d['id'],
@@ -31,7 +31,7 @@ def get_id(name_or_id):
 
     return database.get_device_id(name_or_id)
 
-def handle_get_device(data):
+def handle_get_device(data, view=None):
     if 'device' not in data:
         return 400, 'Missing device' 
 
@@ -45,5 +45,5 @@ def handle_get_device(data):
     else:
         return 200, json.dumps(device)
 
-def handle_get_device_list(data):
-    return 200, json.dumps(get_devices())
+def handle_get_device_list(data, view=None):
+    return 200, json.dumps(get_devices(view))

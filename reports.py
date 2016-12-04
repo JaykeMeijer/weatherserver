@@ -36,7 +36,7 @@ def get_report_type_id(name_or_id):
     return database.get_report_type_id(name_or_id)
 
 
-def handle_get_reports(data):
+def handle_get_reports(data, view=None):
     if 'device' not in data:
         return 400, 'Missing device'
 

@@ -50,13 +50,19 @@ class Database:
         else:
             return device
 
-    def get_devices(self):
+    def get_devices(self, view=None):
         cur = self.get_cur()
         query = '''
-                SELECT id, prettyname
+                SELECT devices.id, prettyname
                 FROM devices
                 '''
-        cur.execute(query)
+        if view is not None:
+            query += 'INNER JOIN views_devices\n' 
+            query += 'ON devices.id=views_devices.device_id\n'
+            query += 'INNER JOIN views\n'
+            query += 'ON views.id=views_devices.view_id\n'
+            query += 'WHERE views.name=%(view)s'
+        cur.execute(query, {'view': view})
         res = cur.fetchall()
         cur.close()
         return res
